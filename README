@@ -1,0 +1,24 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1607
+
+Peruse, compare, choose color schemes
+
+When the cursor is in the ColorPeruse window:   
+<kPlus>      :ColorPeruse 1             (next color)
+<kMinus>    :ColorPeruse -1            (prev color)
+<kMultiply> :ColorPeruse                 (original color)
+<kDivide>   :ColorPeruse 0              (color under cursor)
+     =             :call ColorPeruseDel() (remove duplicate lines)
+     +             :call ColorPeruseMerge() (append all :set rtp colors to list)
+     ?      Help
+     :q     quit
+ 
+
+You are in vim when in the ColorPeruse window, so you can edit items you 
+don't like from the list, or place markers to return to re-view particular colorschemes.
+You can cut/paste to put favorites or color/lightness groups together 
+to compare more closely.
+Also, since it is in vim, you can save the ColorPeruse list to a file, or 
+load it from a previous perusal list.
+
+
+
