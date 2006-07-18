@@ -2,51 +2,103 @@
 "Peruse Color Schemes
 "
 "Walter Hutchins
-"Last Change July 14 2006
-"Version 1.1
+"Last Change July 18 2006
+"Version 1.4
 "
 "Setup: copy to ~/.vim/plugin
 "
-"maybe do these mappings
-"map <Leader>co :ColorPeruse<Space><CR>       - startup / reset to original
-"map <Leader>cp :ColorPeruse<Space>0<CR>      - change to color under cursor
-"map <Leader>c= :ColorPeruse<Space>1<CR>      - change to next color
-"map <Leader>c- :ColorPeruse<Space>-1<CR>     - change to previous color
+"Put this mapping in .vimrc:
+"    map <Leader>cp :ColorPeruse<Space>0<CR>:echo g:colors_name<CR>
+"Then \cp will start it up.
 "
-"You can edit items you don't like from the perusal list (temporary file)
-"so you can narrow down the the list to your preferred items.
-"Or, you could cut/paste in a previously prepared perusal list.
+"Type ? for help
 
-command -nargs=* ColorPeruse call s:ColorPeruse(<f-args>)
+"You are in vim when in the ColorPeruse window, so you can edit items you 
+"don't like from the list, or place markers to return to re-view particular
+"colorschemes.
+"You can even cut/paste to put favorites together to compare more closely.
 
-function s:ColorPeruseList() 
+command -nargs=* ColorPeruse call <SID>ColorPeruse(<f-args>)
+
+function <SID>ColorPeruseHelp()
+    let helpmsg=""
+    let helpmsg=helpmsg . "When the cursor is in the ColorPeruse window: \n"   
+    let helpmsg=helpmsg . "   <kPlus>  :ColorPeruse 1         (next color) \n"
+    let helpmsg=helpmsg . "  <kMinus>  :ColorPeruse -1        (prev color) \n"
+    let helpmsg=helpmsg . "<kMultiply> :ColorPeruse           (original color) \n"
+    let helpmsg=helpmsg . " <kDivide>  :ColorPeruse 0         (color under cursor) \n"
+    let helpmsg=helpmsg . "     =      :call ColorPeruseDel() (remove duplicate lines) \n"
+    let helpmsg=helpmsg . "     ?      Help \n"
+    let helpmsg=helpmsg . "     :q     quit \n"
+    echo helpmsg
+endfunction
+
+function <SID>ColorPeruseList() 
     let x=globpath(&rtp, "colors/*.vim")
     let y=substitute(x."\n","\\(^\\|\n\\)[^\n]*[/\\\\]", "\n", "g")
     let z=substitute(y,"\\.vim\n", "\n", "g")
     let s:csl=z
     let s:ocolor=g:colors_name
+    vnew
+    exec 'edit ColorPeruse'
+    vertical resize 18
+    1,$d
+    put =s:csl
+    g/^$/d
+" the following trick avoids the "Press RETURN ..." prompt
+0 append
+.
+    set nomodified
+    map <buffer> <silent> <kMinus> :ColorPeruse -1<CR>:echo g:colors_name<CR>
+    map <buffer> <silent> <kPlus> :ColorPeruse 1<CR>:echo g:colors_name<CR>
+    map <buffer> <silent> <kMultiply> :ColorPeruse<CR>:echo g:colors_name<CR>
+    map <buffer> <silent> <kDivide> :ColorPeruse 0<CR>:echo g:colors_name<CR>
+    map <buffer> <silent> = :call <SID>ColorPeruseDel()<CR>
+    map <buffer> ? :call <SID>ColorPeruseHelp()<CR>
     return z
 endfun
 
-function s:ColorPeruse(...)
+" function to delete duplicate lines
+function <SID>ColorPeruseDel()
+    let lnc=line(".")
+    exec 'let one=1'
+    exec 'let dollar=line("$")'
+    let loop=1
+    while loop <= dollar
+        exec loop
+        exec 'let ll=getline(".")'
+        y a
+        exec '%s/^\('.ll.'\)$//'
+        let putback=loop
+        exec putback . 'put a'
+        let loop=loop + 1
+        g/^$/d
+        exec 'let dollar=line("$")'
+    endwhile
+    if lnc > dollar
+        let lnc=dollar
+    endif
+    exec lnc
+    set nomodified
+endfunction
+
+function <SID>ColorPeruse(...)
     if bufloaded('ColorPeruse')
         exec 'drop  ColorPeruse'
         if a:0 == 1
             let apply=1
             let move=a:1 + 0
-            let cl=getline(".")
-            let tl=getline(1)
-            let la=getline("$")
+            let lnb=1
+            let lnc=line(".")
+            let lne=line("$")
             let lm=""
             if move > 0
-                let lm=getline(".+" . move)
-                if lm == la
+                if lnc == lne
                     let move=0
                     1
                 endif
             elseif move < 0
-                let lm=getline(".-" . move)
-                if lm == tl
+                if lnc == lnb
                     let move=0
                     $
                 endif
@@ -55,7 +107,7 @@ function s:ColorPeruse(...)
             let apply=0
             let move=0
         endif
-        exec '.' . move
+        exec "." . move
         yank a
         if !apply
             let @a=s:ocolor
@@ -68,16 +120,6 @@ function s:ColorPeruse(...)
         exec cmd
         exec 'color ' . scheme
     else
-        call s:ColorPeruseList()
-        vnew
-        exec 'edit ColorPeruse'
-        vertical resize 18
-        1,$d
-        put =s:csl
-        g/^$/d
-" the following trick avoids the "Press RETURN ..." prompt
-0 append
-.
-        set nomodified
+        call <SID>ColorPeruseList()
     endif
 endfunction
