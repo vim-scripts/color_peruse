@@ -2,8 +2,8 @@
 "Peruse Color Schemes
 "
 "Walter Hutchins
-"Last Change July 18 2006
-"Version 1.4
+"Last Change July 19 2006
+"Version 1.5
 "
 "Setup: copy to ~/.vim/plugin
 "
@@ -49,10 +49,10 @@ function <SID>ColorPeruseList()
 0 append
 .
     set nomodified
-    map <buffer> <silent> <kMinus> :ColorPeruse -1<CR>:echo g:colors_name<CR>
-    map <buffer> <silent> <kPlus> :ColorPeruse 1<CR>:echo g:colors_name<CR>
-    map <buffer> <silent> <kMultiply> :ColorPeruse<CR>:echo g:colors_name<CR>
-    map <buffer> <silent> <kDivide> :ColorPeruse 0<CR>:echo g:colors_name<CR>
+    map <buffer> <silent> <kMinus> :ColorPeruse -1<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
+    map <buffer> <silent> <kPlus> :ColorPeruse 1<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
+    map <buffer> <silent> <kMultiply> :ColorPeruse<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
+    map <buffer> <silent> <kDivide> :ColorPeruse 0<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
     map <buffer> <silent> = :call <SID>ColorPeruseDel()<CR>
     map <buffer> ? :call <SID>ColorPeruseHelp()<CR>
     return z
