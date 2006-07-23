@@ -2,8 +2,8 @@
 "Peruse Color Schemes
 "
 "Walter Hutchins
-"Last Change July 19 2006
-"Version 1.5
+"Last Change July 24 2006
+"Version 1.6
 "
 "Setup: copy to ~/.vim/plugin
 "
@@ -48,6 +48,9 @@ function <SID>ColorPeruseList()
 " the following trick avoids the "Press RETURN ..." prompt
 0 append
 .
+    if exists("g:colors_name")
+        let gcline=search(g:colors_name, "w")
+    endif
     set nomodified
     map <buffer> <silent> <kMinus> :ColorPeruse -1<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
     map <buffer> <silent> <kPlus> :ColorPeruse 1<CR>:echo exists("g:colors_name") ? g:colors_name : "missing g:colors_name"<CR>
