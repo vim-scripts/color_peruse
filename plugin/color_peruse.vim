@@ -3,7 +3,7 @@
 "
 "Walter Hutchins
 "Last Change July 25 2006
-"Version 1.8
+"Version 1.9
 "
 "Setup: copy to ~/.vim/plugin
 "
@@ -64,6 +64,7 @@ endfunction
 
 function <SID>ColorPeruseList(...) 
     let s:xcsl=""
+    let gxcsl=""
     if a:0 > 0
         let s:xcsl=a:1
         "let s:xcsl=substitute(s:xcsl, '\\', '/', '')
